@@ -1,0 +1,23 @@
+<!-- ThesisApp/templates/main.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Main Page{% endblock %}</title>
+    <!-- Include your CSS file -->
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="{% url 'ThesisApp:upload_pdf' %}">Upload PDF</a></li>
+            <!-- Add more links as needed -->
+        </ul>
+    </nav>
+    <div id="content">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,101 @@
+{% extends 'main.html' %}
+
+{% block title %}Upload PDF{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f4f4f4;
+        color: #333;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1, h2 {
+        color: #333;
+    }
+
+    form {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+    }
+
+    input[type="file"] {
+        margin-bottom: 10px;
+    }
+
+    button {
+        padding: 10px 20px;
+        background-color: #333;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #555;
+    }
+
+    .paragraph-container {
+        margin-top: 20px;
+    }
+
+    .question-container {
+        text-align: left;
+        margin-top: 20px;
+    }
+
+    hr {
+        margin: 10px 0;
+        border: none;
+        border-top: 1px solid #ddd;
+    }
+
+</style>
+
+{% if paragraph_questions %}
+    {% for paragraph, details in paragraph_questions.items %}
+        <div class="paragraph-container">
+            <h1>Paragraph {{ forloop.counter }}</h1>
+            <p>{{ details.text }}</p>
+            <form method="post" action="{% url 'ThesisApp:upload_pdf' %}">
+                {% csrf_token %}
+                {% for question, choices_list in details.choices.items %}
+                    <div class="question-container">
+                        <strong>{{ question }}:</strong>
+                        <br>
+                        {% for choice in choices_list %}
+                            <label for="choice_{{ question }}_{{ forloop.counter }}">{{ choice }}</label>
+                            <input type="radio" name="choice_{{ question }}" id="choice_{{ question }}_{{ forloop.counter }}" value="{{ choice }}">
+                            <br>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+                <button type="submit">Submit</button>
+            </form>
+            {% for answer, question in details.questions_answers %}
+                <strong>Correct answers: </strong>
+                <label for="choice_{{ question }}">{{ answer }}</label>
+                <input type="radio" name="choice_{{ question }}" id="choice_{{ question }}" value="{{ answer }}" checked>
+                <br>
+                <hr>
+            {% endfor %}
+        </div>
+    {% endfor %}
+{% else %}
+    <h1>Upload PDF</h1>
+    <form method="post" enctype="multipart/form-data" action="{% url 'ThesisApp:upload_pdf' %}">
+        {% csrf_token %}
+        <label for="pdf_file">Select PDF file:</label>
+        <input type="file" name="pdf_file" accept=".pdf" required>
+        <br>
+        <button type="submit">Upload</button>
+    </form>
+{% endif %}
+{% endblock %}
